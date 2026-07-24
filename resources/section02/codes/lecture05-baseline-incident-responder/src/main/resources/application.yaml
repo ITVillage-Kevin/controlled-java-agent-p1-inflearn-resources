@@ -1,0 +1,27 @@
+server:
+  port: 18080
+
+spring:
+  application:
+    name: incident-responder-application
+  ai:
+    model:
+      chat: openai        # ChatModel 기본 provider
+    embedding:
+      text: openai        # Embedding 기본 provider
+    openai:               # OpenAI 설정
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        model: gpt-4.1-mini
+        temperature: 0.3
+        max-tokens: 1200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics"
+
+  endpoint:
+    health:
+      show-details: always
