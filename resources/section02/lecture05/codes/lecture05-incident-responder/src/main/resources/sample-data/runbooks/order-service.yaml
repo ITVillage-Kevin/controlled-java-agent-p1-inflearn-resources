@@ -1,0 +1,55 @@
+service: order-service
+
+entries:
+  - id: ORD-DB-POOL-001
+    title: Database connection pool saturation
+    priority: 100
+    updatedAt: 2026-07-01
+    severityHints:
+      - HIGH
+      - CRITICAL
+    keywords:
+      - timeout
+      - 500
+      - connection
+      - pool
+      - sqltransientconnectionexception
+    content: |
+      Check HikariCP active, idle, and pending connection counts.
+      Review database timeout spikes, lock waits, and slow transactions.
+      Confirm whether a recent deployment increased transaction duration.
+
+  - id: ORD-LOCK-002
+    title: Transaction lock timeout
+    priority: 90
+    updatedAt: 2026-06-15
+    severityHints:
+      - MEDIUM
+      - HIGH
+      - CRITICAL
+    keywords:
+      - lock
+      - timeout
+      - deadlock
+      - transaction
+    content: |
+      Inspect slow queries and lock wait chains.
+      Identify retry amplification caused by concurrent order updates.
+      Confirm whether inventory or payment dependencies delay commits.
+
+  - id: ORD-API-500-003
+    title: Order API HTTP 500 surge
+    priority: 80
+    updatedAt: 2026-05-20
+    severityHints:
+      - HIGH
+      - CRITICAL
+    keywords:
+      - 500
+      - exception
+      - order
+      - api
+    content: |
+      Compare HTTP 500 rate with deployment timing and database saturation.
+      Inspect controller and service exception patterns.
+      Verify idempotency protections before replaying failed orders.

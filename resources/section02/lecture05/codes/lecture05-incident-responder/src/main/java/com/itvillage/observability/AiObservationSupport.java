@@ -9,7 +9,7 @@ public class AiObservationSupport {
 
     private static final Logger log = LoggerFactory.getLogger(AiObservationSupport.class);
 
-    public void mark(String stage, String detail) {
-        log.info("[ai-stage] stage={}, detail={}", stage, detail);
+    public void mark(String stage, String incidentId) {
+        log.info("AI observation marker. stage={}, incidentId={}", stage, incidentId);
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 @Configuration
 public class JacksonConfig {
@@ -13,5 +14,11 @@ public class JacksonConfig {
         return new ObjectMapper()
                 .findAndRegisterModules()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
+
+    @Bean
+    public ObjectMapper yamlObjectMapper() {
+        return new ObjectMapper(new YAMLFactory())
+                .findAndRegisterModules();
     }
 }

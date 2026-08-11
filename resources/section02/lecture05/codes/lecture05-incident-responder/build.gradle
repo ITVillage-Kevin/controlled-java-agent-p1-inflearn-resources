@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

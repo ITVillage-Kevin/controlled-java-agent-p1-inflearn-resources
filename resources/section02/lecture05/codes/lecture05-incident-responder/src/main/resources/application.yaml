@@ -25,3 +25,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+sample-data:
+  runbooks-location: classpath*:sample-data/runbooks/*.yaml
+  incident-history-location: classpath:sample-data/incident-history/recent-incidents.json
+  escalation-policy-location: classpath:sample-data/policies/escalation-policies.yaml
