@@ -14,10 +14,29 @@ entries:
       - connection
       - pool
       - sqltransientconnectionexception
+    deduplicationKey: database-connectivity
     content: |
       Check HikariCP active, idle, and pending connection counts.
       Review database timeout spikes, lock waits, and slow transactions.
       Confirm whether a recent deployment increased transaction duration.
+
+  - id: ORD-DB-CONNECTION-004
+    title: Database connection timeout triage
+    priority: 85
+    updatedAt: 2026-05-18
+    severityHints:
+      - HIGH
+      - CRITICAL
+    keywords:
+      - timeout
+      - connection
+      - database
+      - 500
+    deduplicationKey: database-connectivity
+    content: |
+      Review database connection timeout trends and pending connection requests.
+      Check whether application-side connection pool starvation is increasing.
+      Compare connection acquisition delay with recent deployment timing.
 
   - id: ORD-LOCK-002
     title: Transaction lock timeout
@@ -32,6 +51,7 @@ entries:
       - timeout
       - deadlock
       - transaction
+    deduplicationKey: transaction-locking
     content: |
       Inspect slow queries and lock wait chains.
       Identify retry amplification caused by concurrent order updates.
@@ -49,6 +69,7 @@ entries:
       - exception
       - order
       - api
+    deduplicationKey: http-500-response
     content: |
       Compare HTTP 500 rate with deployment timing and database saturation.
       Inspect controller and service exception patterns.

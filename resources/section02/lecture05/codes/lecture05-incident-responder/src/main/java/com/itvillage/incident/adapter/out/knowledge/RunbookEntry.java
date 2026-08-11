@@ -14,6 +14,7 @@ public record RunbookEntry(String id,
                            LocalDate updatedAt,
                            List<IncidentSeverity> severityHints,
                            List<String> keywords,
+                           String deduplicationKey,
                            String content) {
     public boolean matches(String summary, List<String> symptoms) {
         Set<String> incidentTerms = Stream.concat(
