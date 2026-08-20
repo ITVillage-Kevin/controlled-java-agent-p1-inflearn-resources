@@ -1,7 +1,7 @@
 # lecture06-baseline-incident-responder-marked
 
 수업 6에서 사용하는 코드는 수업 5의 baseline Incident Responder 앱과 **완전히 같은 코드**입니다.
-클래스도, 메서드도, 로직도 바뀐 것이 없습니다..
+클래스도, 메서드도, 로직도 바뀐 것이 없습니다.
 
 달라진 것은 단 하나, 이 코드 위에 `// COST POINT`, `// QUALITY POINT`, `// RISK POINT`, `// FLOW POINT`라는
 네 종류의 주석이 통제 4축(비용·품질·리스크·흐름) 관점에서 미리 표시되어 있다는 점입니다.
