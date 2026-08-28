@@ -1,0 +1,54 @@
+server:
+  port: 18080
+
+spring:
+  application:
+    name: incident-responder-application
+  ai:
+    model:
+      chat: openai        # ChatModel 기본 provider
+    embedding:
+      text: openai        # Embedding 기본 provider
+    openai:               # OpenAI 설정
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        model: gpt-4.1-mini
+        temperature: 0.3
+        max-tokens: 1200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics"
+
+  endpoint:
+    health:
+      show-details: always
+
+  #-- 수업 7: 추가 시작
+  observations:
+    annotations:
+      enabled: true
+
+  tracing:
+    sampling:
+      probability: 1.0
+  #-- 수업 7: 추가 끝
+
+sample-data:
+  runbooks-location: classpath*:sample-data/runbooks/*.yaml
+  incident-history-location: classpath:sample-data/incident-history/recent-incidents.json
+  escalation-policy-location: classpath:sample-data/policies/escalation-policies.yaml
+
+# 수업 7: 추가
+logging:
+  pattern:
+    console: >-
+      %d{yyyy-MM-dd HH:mm:ss.SSS}
+      [%thread]
+      traceId=%X{traceId:-}
+      spanId=%X{spanId:-}
+      %-5level
+      %logger{36}
+      - %msg%n
