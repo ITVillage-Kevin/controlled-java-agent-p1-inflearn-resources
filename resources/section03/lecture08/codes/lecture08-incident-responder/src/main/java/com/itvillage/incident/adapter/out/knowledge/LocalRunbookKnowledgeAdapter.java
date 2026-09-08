@@ -27,26 +27,24 @@ public class LocalRunbookKnowledgeAdapter implements IncidentKnowledgePort {
         List<RunbookEntry> entriesToReturn = matchedEntries.isEmpty() ? runbookCatalog.findDefaultEntries() : matchedEntries;
 
         // COST POINT:
-        // 이 adapter는 서비스별 런북을 읽고,
-        // summary·symptoms로 관련 런북을 찾고,
-        // priority·updatedAt 기준으로 정렬한다.
+        // Runbook이 여러 개 검색되면 현재는 그 결과를 모두 반환한다.
         //
-        // 그러나 관련 런북이 여러 개면 모두 반환한다.
+        // 즉 아직 다음과 같은 전달량 통제가 없다.
         //
-        // 아직 없는 것:
-        // - 반환 항목 상한
-        // - 총 문자 수 상한
-        // - 유사 런북 중복 제거
-        // - severity별 서로 다른 context budget
-        // - Prompt 전체 토큰 예산 계산
+        // - 관련 Runbook의 최대 반환 개수
+        // - 같은 문제군에 속하는 유사 Runbook의 중복 제거
+        // - Incident severity에 따른 서로 다른 Context 허용량
         //
-        // 따라서 여러 키워드가 동시에 매칭되면,
-        // 다수의 런북 본문이 IncidentPromptFactory로 전달된다.
+        // 따라서 운영이 계속되어 Runbook이 늘어나거나,
+        // 하나의 Incident에 여러 Runbook이 동시에 매칭되면
+        // LLM Prompt로 전달되는 Context도 함께 증가할 수 있다.
         //
         // 개선 방향:
-        // 관련 런북 상위 N개만 선택
-        // 런북 본문 최대 길이 제한
-        // 같은 문제군의 유사 런북 중복 제거
+        // - 검색된 Runbook의 우선순위와 관련성을 유지하면서 같은 문제군의 중복을 줄이고,
+        // - Incident 특성에 따라 LLM에 전달할 개수에 명시적인 상한을 둔다.
+        //
+        // 구체적인 상한 값과 선택 정책은
+        // 실제 데이터 구조와 token 사용량을 관찰한 뒤 결정한다.
         return runbookCatalog.sortByPriorityAndRecency(entriesToReturn)
                 .stream()
                 .map(RunbookEntry::content)

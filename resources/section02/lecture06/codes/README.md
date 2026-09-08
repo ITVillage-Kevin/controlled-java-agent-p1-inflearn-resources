@@ -287,7 +287,6 @@ HTTP 요청
 - `LocalIncidentHistoryAdapter.findSimilarIncidents(...)`
   - 같은 서비스의 과거 장애를 찾고, 유사도 점수와 최신성 기준으로 정렬합니다.
   - 하지만 유사도 점수가 있는 과거 장애 이력을 모두 반환합니다.
-  - 반환 건수와 각 `resolutionSummary`의 길이를 제한하지 않습니다.
 
 ```java
 // COST POINT:

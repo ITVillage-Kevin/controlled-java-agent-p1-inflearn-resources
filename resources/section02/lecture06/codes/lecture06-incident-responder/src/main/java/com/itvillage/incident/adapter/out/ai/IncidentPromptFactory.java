@@ -15,20 +15,19 @@ public class IncidentPromptFactory {
                                       List<SimilarIncidentSummary> similarIncidents,
                                       String escalationPolicy) {
         // COST POINT:
-        // runbookSnippets와 similarIncidents의 개수·글자 수·중복 여부를 확인하지 않는다.
-        // adapter가 반환한 컨텍스트 전체가 그대로 Prompt에 들어간다.
+        // - 전달할 Runbook과 과거 Incident Context를 개수 제한없이 그대로 Prompt에 포함한다.
+        // - 또한 외부에서 들어온 Incident의 title, summary, symptoms도 크기 상한 없이 그대로 Prompt에 들어간다.
         //
-        // 예:
-        // - 여러 symptom이 동시에 매칭되면 런북 본문이 다수 추가된다.
-        // - 유사 장애 이력이 많으면 resolutionSummary가 계속 누적된다.
-        // - escalationPolicy도 길이 제한 없이 추가된다.
+        // 따라서 데이터와 입력이 커질수록 LLM에 전달되는 Context도 함께 증가할 수 있다.
         //
         // 개선 방향:
-        // - top N 제한
-        // - 본문 길이 제한
-        // - 중복 제거
-        // - Prompt 토큰 예산 기반 캡핑
-        // 을 적용한다.
+        // - 관련 Context의 중복을 줄이고
+        // - 중요도와 Incident 특성에 따라 전달 개수에 상한을 두고
+        // - 크기를 신뢰하기 어려운 외부 입력에는 명시적인 제한을 둔다.
+        //
+        // 어떤 Context를 몇 개까지 허용할지,
+        // 어떤 입력의 크기를 제한할지는
+        // 실제 데이터 구조와 실행 결과를 관찰한 뒤 결정한다.
         return """
                 You are an incident analysis assistant for Korean operations teams.
 
@@ -101,11 +100,17 @@ public class IncidentPromptFactory {
                                     IncidentAiAnalysisOutput analysisOutput,
                                     String escalationPolicy) {
         // COST POINT:
-        // 분석 결과의 모든 필드를 다음 액션 Prompt에 그대로 재주입한다.
-        // 분석 결과가 길어질수록 두 번째 LLM 호출의 입력 크기도 증가한다.
+        // - 첫 번째 LLM이 생성한 분석 결과를 두 번째 액션 Prompt에 그대로 다시 포함한다.
+        //
+        // 첫 번째 LLM의 output은 두 번째 LLM 호출에서는 다시 input이 되기 때문에,
+        // 분석 결과가 길어질수록 다음 호출의 입력 크기도 증가할 수 있다.
         //
         // 개선 방향:
-        // 전체 분석 결과 대신 액션 생성에 필요한 요약 정보만 재전달하도록 개선한다.
+        // - 액션 생성에 필요한 분석 정보는 유지하되,
+        // 이전 LLM 출력이 다음 Prompt에 무제한으로 재주입되지 않도록 명시적인 크기 상한을 둔다.
+        //
+        // - 여러 번 LLM을 호출하는 흐름에서는 사용자 입력과 검색 Context뿐 아니라
+        // 이전 LLM 결과의 재주입 크기도 비용 통제 지점으로 본다.
         return """
                 You are an incident response action planner for Korean operations teams.
 

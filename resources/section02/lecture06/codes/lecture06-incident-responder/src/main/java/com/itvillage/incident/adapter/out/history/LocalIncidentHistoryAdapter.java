@@ -26,11 +26,23 @@ public class LocalIncidentHistoryAdapter implements IncidentHistoryPort {
         Set<String> queryTerms = extractTerms(summary);
 
         // COST POINT:
-        // baseline은 유사도가 있는 과거 장애 이력을 모두 반환한다.
-        // 반환 이력 개수와 resolutionSummary 길이를 제한하지 않는다.
+        // 관련 이력이 여러 건 검색되면 현재는 그 결과를 모두 반환한다.
+        //
+        // 즉 아직 다음과 같은 전달량 통제가 없다.
+        //
+        // - 유사 Incident의 최대 반환 개수
+        // - Incident severity에 따른 서로 다른 Context 허용량
+        //
+        // 따라서 운영이 계속되어 과거 Incident 이력이 쌓일수록,
+        // LLM Prompt에 전달되는 History Context도 함께 증가할 수 있다.
+        //
         // 개선 방향:
-        // 유사 장애 이력 상위 N개만 선택
-        // resolutionSummary 최대 길이 제한
+        // - 기존 유사도 순위는 유지하면서
+        // - Incident 특성에 따라 상위 이력만 선택하고,
+        // - LLM에 전달할 개수에 명시적인 상한을 둔다.
+        //
+        // 구체적인 상한 값은
+        // 실제 데이터와 token 사용량을 관찰한 뒤 결정한다.
         return incidentHistoryCatalog.findBySourceSystem(sourceSystem)
                 .stream()
                 .map(incident -> new ScoredIncident(
