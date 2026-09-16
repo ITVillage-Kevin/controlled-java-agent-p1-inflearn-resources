@@ -1,0 +1,20 @@
+service: common
+
+entries:
+  - id: COMMON-HEALTH-001
+    title: General service health triage
+    priority: 50
+    updatedAt: 2026-05-01
+    severityHints:
+      - LOW
+      - MEDIUM
+      - HIGH
+      - CRITICAL
+    keywords:
+      - health
+      - error
+      - timeout
+      - 500
+    content: |
+      Check service health, dependency health, recent deployments,
+      error-rate trend, latency trend, and top application exceptions.

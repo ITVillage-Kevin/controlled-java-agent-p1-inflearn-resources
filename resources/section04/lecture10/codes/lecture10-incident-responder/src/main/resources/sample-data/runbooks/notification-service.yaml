@@ -1,0 +1,38 @@
+service: notification-service
+
+entries:
+  - id: NOTIFY-RATE-LIMIT-001
+    title: Provider rate limit and delivery delay
+    priority: 85
+    updatedAt: 2026-06-20
+    severityHints:
+      - MEDIUM
+      - HIGH
+    keywords:
+      - rate
+      - limit
+      - delay
+      - sms
+      - email
+    content: |
+      Check provider response codes and account-level rate limits.
+      Inspect queue depth and delayed-message counts.
+      Apply controlled backoff before retrying failed deliveries.
+
+  - id: NOTIFY-QUEUE-002
+    title: Notification queue backlog
+    priority: 80
+    updatedAt: 2026-05-30
+    severityHints:
+      - LOW
+      - MEDIUM
+      - HIGH
+    keywords:
+      - queue
+      - backlog
+      - retry
+      - notification
+    content: |
+      Check worker throughput, retry volume, and poison-message counts.
+      Distinguish customer-impacting messages from lower-priority campaigns.
+      Prioritize transactional notifications before promotional messages.
