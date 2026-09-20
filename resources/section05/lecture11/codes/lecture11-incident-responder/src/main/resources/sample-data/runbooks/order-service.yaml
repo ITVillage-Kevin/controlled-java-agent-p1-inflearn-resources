@@ -1,0 +1,146 @@
+service: order-service
+
+entries:
+  - id: ORD-DB-POOL-001
+    title: Database connection pool saturation
+    priority: 100
+    updatedAt: 2026-07-01
+    severityHints: [HIGH, CRITICAL]
+    keywords: [timeout, 500, connection, pool, sqltransientconnectionexception]
+    deduplicationKey: database-connectivity
+    content: |
+      Check HikariCP active, idle, and pending connection counts.
+      Review database timeout spikes, lock waits, and slow transactions.
+      Confirm whether a recent deployment increased transaction duration.
+
+  - id: ORD-DB-CONNECTION-004
+    title: Database connection timeout triage
+    priority: 85
+    updatedAt: 2026-05-18
+    severityHints: [HIGH, CRITICAL]
+    keywords: [timeout, connection, database, 500]
+    deduplicationKey: database-connectivity
+    content: |
+      Review database connection timeout trends and pending connection requests.
+      Check whether application-side connection pool starvation is increasing.
+      Compare connection acquisition delay with recent deployment timing.
+
+  - id: ORD-LOCK-002
+    title: Transaction lock timeout
+    priority: 90
+    updatedAt: 2026-06-15
+    severityHints: [MEDIUM, HIGH, CRITICAL]
+    keywords: [lock, timeout, deadlock, transaction]
+    deduplicationKey: transaction-locking
+    content: |
+      Inspect slow queries and lock wait chains.
+      Identify retry amplification caused by concurrent order updates.
+      Confirm whether inventory or payment dependencies delay commits.
+
+  - id: ORD-API-500-003
+    title: Order API HTTP 500 surge
+    priority: 80
+    updatedAt: 2026-05-20
+    severityHints: [HIGH, CRITICAL]
+    keywords: [500, exception, order, api]
+    deduplicationKey: http-500-response
+    content: |
+      Compare HTTP 500 rate with deployment timing and database saturation.
+      Inspect controller and service exception patterns.
+      Verify idempotency protections before replaying failed orders.
+
+  - id: ORD-DB-SLOW-TX-005
+    title: Slow transaction causing connection starvation
+    priority: 88
+    updatedAt: 2026-07-08
+    severityHints: [HIGH, CRITICAL]
+    keywords: [timeout, transaction, connection, pool, slow]
+    deduplicationKey: database-connectivity
+    content: |
+      Compare transaction duration with connection acquisition delay.
+      Identify long-running order writes that keep database connections occupied.
+      Check whether recent query or transaction changes increased hold time.
+
+  - id: ORD-LOCK-AMPLIFICATION-006
+    title: Lock amplification during concurrent order updates
+    priority: 86
+    updatedAt: 2026-07-05
+    severityHints: [HIGH, CRITICAL]
+    keywords: [lock, transaction, timeout, retry, order]
+    deduplicationKey: transaction-locking
+    content: |
+      Inspect lock wait chains for repeated order-row contention.
+      Check whether retries increase concurrent updates on the same order range.
+      Reduce retry amplification before changing database concurrency settings.
+
+  - id: ORD-API-EXCEPTION-007
+    title: Order service exception burst after deployment
+    priority: 82
+    updatedAt: 2026-06-30
+    severityHints: [MEDIUM, HIGH, CRITICAL]
+    keywords: [500, exception, deployment, order, api]
+    deduplicationKey: http-500-response
+    content: |
+      Compare exception volume before and after the most recent deployment.
+      Group top stack traces by controller and service path.
+      Confirm whether database or downstream failures explain the exception burst.
+
+  - id: ORD-DB-FAILOVER-008
+    title: Database failover connection acquisition delay
+    priority: 84
+    updatedAt: 2026-06-27
+    severityHints: [HIGH, CRITICAL]
+    keywords: [database, timeout, connection, failover, latency]
+    deduplicationKey: database-connectivity
+    content: |
+      Verify database primary and replica health after failover.
+      Compare connection acquisition latency with datasource timeout settings.
+      Check whether stale connections remain in the application pool.
+
+  - id: ORD-DEPENDENCY-INVENTORY-009
+    title: Inventory dependency delay affecting order commits
+    priority: 76
+    updatedAt: 2026-06-22
+    severityHints: [MEDIUM, HIGH]
+    keywords: [inventory, timeout, transaction, latency, order]
+    deduplicationKey: dependency-latency
+    content: |
+      Compare inventory reservation latency with order transaction duration.
+      Check whether synchronous dependency delay keeps order transactions open.
+      Confirm fallback behavior before isolating the inventory dependency.
+
+  - id: ORD-DEPENDENCY-PAYMENT-010
+    title: Payment dependency timeout during order processing
+    priority: 74
+    updatedAt: 2026-06-19
+    severityHints: [MEDIUM, HIGH]
+    keywords: [payment, timeout, order, dependency, latency]
+    deduplicationKey: dependency-latency
+    content: |
+      Compare payment authorization timeout rate with order request failures.
+      Check whether order threads are blocked while waiting for payment responses.
+      Verify timeout and retry settings before increasing request concurrency.
+
+  - id: ORD-QUERY-REGRESSION-011
+    title: Slow query regression after schema change
+    priority: 83
+    updatedAt: 2026-07-02
+    severityHints: [HIGH, CRITICAL]
+    keywords: [slow, query, database, timeout, deployment]
+    deduplicationKey: query-regression
+    content: |
+      Compare top slow queries with the latest schema or index changes.
+      Check query plan changes and rows scanned for affected order operations.
+      Confirm whether the regression increases transaction duration or pool usage.
+
+  - id: ORD-RETRY-STORM-012
+    title: Retry storm after transient order failures
+    priority: 78
+    updatedAt: 2026-06-29
+    severityHints: [HIGH, CRITICAL]
+    keywords: [retry, timeout, 500, order, transaction]
+    deduplicationKey: retry-amplification
+    content: |
+      Measure retry volume against original request volume.
+      Check whether retries amplify database, payment, or inventory pressure.
+      Reduce retry fan-out before increasing downstream capacity.
