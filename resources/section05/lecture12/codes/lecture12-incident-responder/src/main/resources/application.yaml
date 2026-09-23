@@ -1,0 +1,58 @@
+server:
+  port: 18080
+
+spring:
+  application:
+    name: incident-responder-application
+  ai:
+    model:
+      chat: openai        # ChatModel 기본 provider
+    embedding:
+      text: openai        # Embedding 기본 provider
+    openai:               # OpenAI 설정
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        model: gpt-4.1-mini
+        temperature: 0.3
+        max-tokens: 1200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics"
+
+  endpoint:
+    health:
+      show-details: always
+
+  observations:
+    annotations:
+      enabled: true
+
+  tracing:
+    sampling:
+      probability: 1.0
+
+  # 수업 8: 추가
+  otlp:
+    tracing:
+      endpoint: ${LANGFUSE_OTLP_TRACES_ENDPOINT:https://jp.cloud.langfuse.com/api/public/otel/v1/traces}
+      headers:
+        Authorization: ${LANGFUSE_OTLP_AUTHORIZATION:Basic dummy}
+        x-langfuse-ingestion-version: "4"
+sample-data:
+  runbooks-location: classpath*:sample-data/runbooks/*.yaml
+  incident-history-location: classpath:sample-data/incident-history/recent-incidents.json
+  escalation-policy-location: classpath:sample-data/policies/escalation-policies.yaml
+
+logging:
+  pattern:
+    console: >-
+      %d{yyyy-MM-dd HH:mm:ss.SSS}
+      [%thread]
+      traceId=%X{traceId:-}
+      spanId=%X{spanId:-}
+      %-5level
+      %logger{36}
+      - %msg%n
